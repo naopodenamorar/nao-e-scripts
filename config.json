@@ -1,0 +1,17 @@
+{
+    "logs": null,
+    "notificacoes": null,
+    "saidas": null,
+    "comandos": null,
+    "dm_novatos": true,
+    "tickets_cat": null,
+    "autorole": null,
+    "automod": true,
+    "bloquear_convites": true,
+    "antispam": true,
+    "antinuke": true,
+    "manutencao": false,
+    "max_warns_kick": 5,
+    "max_warns_ban": 7,
+    "dias_limite_warn": 7
+}
