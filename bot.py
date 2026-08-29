@@ -1178,22 +1178,6 @@ async def erro(i: discord.Interaction, error: Exception):
     except:
         pass
 
-# Servidor HTTP fake para manter o Render ativo
-from aiohttp import web
-
-async def handle(request):
-    return web.Response(text="Bot online!")
-
-@bot.event
-async def on_ready():
-    logger.info(f"Logged in as {bot.user}")
-    app = web.Application()
-    app.router.add_get('/', handle)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    port = int(os.getenv("PORT", 8080))
-    site = web.TCPSite(runner, '0.0.0.0', port)
-    await site.start()
 
 # Servidor HTTP fake para manter o Render feliz no plano grátis
 import asyncio
