@@ -470,9 +470,11 @@ async def start_web_server():
     
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', 8080)
+    # Pega a porta dinamicamente da variável de ambiente para que o Render ou Heroku funcionem
+    port = int(os.getenv("PORT", 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
-    logger.info("🌐 Dashboard em http://0.0.0.0:8080")
+    logger.info(f"🌐 Dashboard e HTTP vivos rodando na porta {port}")
 
 # ================= MODALS E VIEWS =================
 class PainelTicketView(discord.ui.View):
@@ -580,10 +582,13 @@ class MeuBot(commands.Bot):
         await self.tree.sync(guild=MY_GUILD)
         logger.info("✅ Bot pronto!")
         
+        # O servidor web principal e único inicia junto com o bot
         asyncio.create_task(start_web_server())
         self.lembrete_loop.start()
 
     async def on_ready(self):
+        global bot_instance
+        bot_instance = self
         logger.info(f"🤖 {self.user} online!")
 
     @tasks.loop(seconds=10)
@@ -777,7 +782,7 @@ async def status(i: discord.Interaction):
     embed = discord.Embed(title="🟢 Status", color=discord.Color.green())
     embed.add_field(name="Ping", value=f"{round(bot.latency * 1000)}ms")
     embed.add_field(name="Versão", value=f"Discord.py {discord.__version__}")
-    embed.add_field(name="Dashboard", value="http://localhost:8080")
+    embed.add_field(name="Dashboard", value="Ativo e rodando")
     await i.response.send_message(embed=embed, ephemeral=True)
 
 # ================= COMANDOS ECONOMIA =================
@@ -1178,27 +1183,8 @@ async def erro(i: discord.Interaction, error: Exception):
     except:
         pass
 
-
-# Servidor HTTP fake para manter o Render feliz no plano grátis
-import asyncio
-from aiohttp import web
-
-async def handle(request):
-    return web.Response(text="Bot online!")
-
-async def start_web_server():
-    app = web.Application()
-    app.router.add_get('/', handle)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    port = int(os.getenv("PORT", 8080))
-    site = web.TCPSite(runner, '0.0.0.0', port)
-    await site.start()
-
 async def main():
-    # Sobe o servidor web em segundo plano
-    await start_web_server()
-    # Inicia o bot do Discord
+    # Inicia o bot do Discord, o Web Server (Dashboard) já está anexado no setup_hook da classe MeuBot.
     async with bot:
         await bot.start(TOKEN)
 
