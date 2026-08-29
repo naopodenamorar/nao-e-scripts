@@ -23,11 +23,12 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
 TOKEN = os.getenv("DISCORD_TOKEN")
+
+if not TOKEN:
     logger.error("❌ Token não encontrado!")
     exit()
-
+    
 ID_DO_SERVIDOR = int(os.getenv("SERVER_ID", "1541930283174076458"))
 OWNER_ID = int(os.getenv("OWNER_ID", "1531126567256719622"))
 MY_GUILD = discord.Object(id=ID_DO_SERVIDOR)
