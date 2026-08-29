@@ -10,7 +10,6 @@ import time
 import os
 import logging
 import json
-from dotenv import load_dotenv
 from aiohttp import web
 from typing import Optional
 
@@ -25,8 +24,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
     logger.error("❌ Token não encontrado!")
     exit()
