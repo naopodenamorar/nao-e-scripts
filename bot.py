@@ -1195,8 +1195,31 @@ async def on_ready():
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
 
+# Servidor HTTP fake para manter o Render feliz no plano grátis
+import asyncio
+from aiohttp import web
+
+async def handle(request):
+    return web.Response(text="Bot online!")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get('/', handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.getenv("PORT", 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+
+async def main():
+    # Sobe o servidor web em segundo plano
+    await start_web_server()
+    # Inicia o bot do Discord
+    async with bot:
+        await bot.start(TOKEN)
+
 if __name__ == "__main__":
     try:
-        bot.run(TOKEN)
+        asyncio.run(main())
     except Exception as e:
         logger.error(f"Erro: {e}")
