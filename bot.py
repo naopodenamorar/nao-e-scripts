@@ -24,7 +24,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-if not TOKEN:
+TOKEN = os.getenv("DISCORD_TOKEN")
     logger.error("❌ Token não encontrado!")
     exit()
 
